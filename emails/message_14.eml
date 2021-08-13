@@ -1,0 +1,50 @@
+Subject: Doctor's Appointment
+From: watson.susan@oops.net
+To: oops_tech@oops.net
+Cc:
+Bcc:
+Date: Tue, 16 Mar 2021 04:19:14 +0000
+Message-ID: <161586835400.22130.8671189681804984239@oops.net>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="===============1306067917098137483=="
+
+--===============1306067917098137483==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+
+All,
+
+I have a denist's appointment @ 8:30 am today --and will return after the appointment around 9:30am.
+
+Cheers,
+Susan
+
+Cordially,
+Susan K. Watson
+OOPS Inc.
+88212 Charles Ranch
+Wongville, FL 51594
+Tel: 570-720-5356
+
+--===============1306067917098137483==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+	<p>All,</p>
+
+	<p>I have a denist&#8217;s appointment @ 8:30 am today &#8212;and will return after the appointment around 9:30am.</p>
+
+	<p>Cheers,<br />
+Susan</p>
+
+	<p>Cordially,<br />
+Susan K. Watson<br />
+OOPS Inc.<br />
+88212 Charles Ranch<br />
+Wongville, FL 51594<br />
+Tel: 570-720-5356</p>
+
+--===============1306067917098137483==--
