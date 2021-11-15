@@ -613,4 +613,31 @@ wolyxeplhuiyl(ip=0x7ffff77f0c94 "198.51.100.227", port=0x1a0a, output=0x7fffffff
 
 ## Challenge 7
 
-uuid: 788391bc-6f62-445d-8eac-25a6b17dcb3c
+Given:
+
+* uuid: 788391bc-6f62-445d-8eac-25a6b17dcb3c
+* hex version: bc918378626f5d448eac25a6b17dcb3c
+
+for dynamic analysis overwrite the random generated on in wolyxeplhuiyl need to ovewrite this id
+
+The following code can decrypt the Cryptobox data
+``` Python
+import nacl.utils
+from nacl.public import PrivateKey, PublicKey, Box
+import keys
+
+print(keys.sus_text)
+enc_pub = PublicKey(public_key=keys.public_key)
+enc_priv = PrivateKey(private_key=keys.client_sec)
+encryptor = Box(public_key=enc_pub, private_key=enc_priv)
+out = encryptor.decrypt(ciphertext=keys.ciphertext,nonce=keys.nonce)
+print(out)
+```
+
+ifclgnqxtgtuc
+set {uint8_t [16]}0x7f3cdc11c530 = {0x78,0x83,0x91,0xbc,0x6f,0x62,0x44,0x5d,0x8e,0xac,0x25,0xa6,0xb1,0x7d,0xcb,0x3c}
+
+first 4 bytes look good
+1dd0e1a455000002000255080010bc918378626f5d448eac25a6b17dcb3ce6342401
+
+1dd0e1a455000002000255080010788391bc6f62445d8eac25a6b17dcb3ce6342401
