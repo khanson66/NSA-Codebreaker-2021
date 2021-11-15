@@ -611,3 +611,6 @@ to further confirm this this funtion below is run. It is the function to send da
 wolyxeplhuiyl(ip=0x7ffff77f0c94 "198.51.100.227", port=0x1a0a, output=0x7fffffffeb20 "", length=0x0)
 ```
 
+## Challenge 7
+
+uuid: 788391bc-6f62-445d-8eac-25a6b17dcb3c
