@@ -598,7 +598,7 @@ this function is used to retrive encrypted data from memory. The relevant retrie
 |0xf| %Y-%m-%d | date formating string |
 |0x10| nightly-exfil | label for TBD most likely web data|
 |0x11| 1.4.0.3-WGX | version of the malware|
-|0x12| e399bbafad9351677a3e154916a361407789c41830c270f9cc4e5b45822259| hex endoded public key of the listening post
+|0x12| e399bbafad9351677a3e154916a361407789c41830c2700f9cc4e5b405822259| hex endoded public key of the listening post
 |0x13| 198.51.100.227 | IP address for the listening post|
 
 in here we can see the values requested for IP, version and public key.
@@ -618,7 +618,20 @@ Given:
 * uuid: 788391bc-6f62-445d-8eac-25a6b17dcb3c
 * hex version: bc918378626f5d448eac25a6b17dcb3c
 
-for dynamic analysis overwrite the random generated on in wolyxeplhuiyl need to ovewrite this id
+The UUID value used is being set in function `ifclgnqxtgtuc(string *uuid,int len)`. The scratch variable temporarily holds the UUID array of random bytes in the `randombytes(uint8_t * arr,int length)`. Stopping the execution right here you can overwrite the random array with the provided uuid. See the gdb command below to over write the array.
+
+```bash
+set {uint8_t [16]} <scratch_pointer_address> = {0x78,0x83,0x91,0xbc,0x6f,0x62,0x44,0x5d,0x8e,0xac,0x25,0xa6,0xb1,0x7d,0xcb,0x3c}
+```
+
+the function that sends that encrypts the data and sends out to the LP is `yffgvgphkpgei()`. Looking at the message varible that is being stored we can see that it get set to the message that is going to be sent out before it is encrypted. With the given UUID we can see that it stores `1dd0e1a455000002000255080010788391bc6f62445d8eac25a6b17dcb3ce6342401` which as a substring contains that UUID. This is the answer to the question.
+
+## Challenge 8
+
+ilneeajkvirge:
+
+payload=client_public(32)+length_header(8)+nonce(24)+ciphertext
+
 
 The following code can decrypt the Cryptobox data
 ``` Python
@@ -633,11 +646,3 @@ encryptor = Box(public_key=enc_pub, private_key=enc_priv)
 out = encryptor.decrypt(ciphertext=keys.ciphertext,nonce=keys.nonce)
 print(out)
 ```
-
-ifclgnqxtgtuc
-set {uint8_t [16]}0x7f3cdc11c530 = {0x78,0x83,0x91,0xbc,0x6f,0x62,0x44,0x5d,0x8e,0xac,0x25,0xa6,0xb1,0x7d,0xcb,0x3c}
-
-first 4 bytes look good
-1dd0e1a455000002000255080010bc918378626f5d448eac25a6b17dcb3ce6342401
-
-1dd0e1a455000002000255080010788391bc6f62445d8eac25a6b17dcb3ce6342401
