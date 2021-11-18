@@ -629,7 +629,7 @@ The UUID value used is being set in function `ifclgnqxtgtuc(string *uuid,int len
 set {uint8_t [16]} <scratch_pointer_address> = {0x78,0x83,0x91,0xbc,0x6f,0x62,0x44,0x5d,0x8e,0xac,0x25,0xa6,0xb1,0x7d,0xcb,0x3c}
 ```
 
-the function that sends that encrypts the data and sends out to the LP is `yffgvgphkpgei()`. Looking at the message varible that is being stored we can see that it get set to the message that is going to be sent out before it is encrypted. With the given UUID we can see that it stores `1dd0e1a455000002000255080010788391bc6f62445d8eac25a6b17dcb3ce6342401` which as a substring contains that UUID. This is the answer to the question.
+the function that sends that encrypts the data that is sent out to the LP is `yffgvgphkpgei()`. Looking at the message varible that is being stored we can see that it get set to the message that is going to be sent out before it is encrypted. With the given UUID we can see that it stores `1dd0e1a455000002000255080010788391bc6f62445d8eac25a6b17dcb3ce6342401` which as a substring contains that UUID. This is the answer to the question.
 
 ## Challenge 8
 
@@ -638,9 +638,11 @@ ilneeajkvirge:
 payload=client_public(32)+length_header(8)+nonce(24)+ciphertext
 
 ```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
+victim->LP: public_key
+Note over victim: hard coded LP public key
+victim->LP: lengthheader + nonce + encrypted_base64_id)
+victim->LP: lengthheader + nonce + pre_cmd + uuid + end_cmd
+LP->victim: LP Verification Response
 ```
 
 The following code can decrypt the Cryptobox data
@@ -656,3 +658,8 @@ encryptor = Box(public_key=enc_pub, private_key=enc_priv)
 out = encryptor.decrypt(ciphertext=keys.ciphertext,nonce=keys.nonce)
 print(out)
 ```
+https://crypto.stackexchange.com/questions/30181/curve25519-alice-can-decrypt-her-own-message-to-bob
+
+https://twitter.com/matthew_d_green/status/1411296706109509637
+
+https://intel471.com/blog/revil-ransomware-as-a-service-an-analysis-of-a-ransomware-affiliate-operation
