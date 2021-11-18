@@ -594,11 +594,11 @@ this function is used to retrive encrypted data from memory. The relevant retrie
 |0x6| /tmp/.gglock |lock file to allow only one instance of the program to run at a time |
 |0x7| /usr/local/src/repo | the repo folder being attacked |
 |0x8| pidof git | command to get process id of git |
-|0x9| Commit:  | For Git Commit? Has space at end `NOT Called in Program`
-|0xa| Author:  | For Git Commit? Has space at end `NOT Called in Program`
-|0xb| Email:  | For Git Commit? Has space at end `NOT Called in Program`
-|0xc| Time:  | For Git Commit? Has space at end `NOT Called in Program`
-|0xd| No data available |  `NOT Called in Program`
+|0x9| Commit:  | For Git Commit? Has space at end |
+|0xa| Author:  | For Git Commit? Has space at end |
+|0xb| Email:  | For Git Commit? Has space at end |
+|0xc| Time:  | For Git Commit? Has space at end |
+|0xd| No data available | for git |
 |0xe| ninja | the renamed make binary |
 |0xf| %Y-%m-%d | date formating string |
 |0x10| nightly-exfil | label for TBD most likely web data|
@@ -637,6 +637,11 @@ ilneeajkvirge:
 
 payload=client_public(32)+length_header(8)+nonce(24)+ciphertext
 
+```sequence
+Alice->Bob: Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!
+```
 
 The following code can decrypt the Cryptobox data
 ``` Python
