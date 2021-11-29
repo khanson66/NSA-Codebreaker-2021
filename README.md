@@ -471,7 +471,7 @@ keys but no entry
 * dkr_tst67 -no encryption
 * dkr_tst95 -no encryption
 
-The attackers have access to builder05@dkr_prd38. This is beacuse the file existed in NTUSER.dat and there is no encrytion which means there is no password needed to use the key (https://tartarus.org/~simon/putty-snapshots/htmldoc/AppendixC.html)
+The attackers have access to builder05@dkr_prd38. This is beacuse the file existed in NTUSER.dat and there is no encrytion which means there is no password needed to use the key [reference](https://tartarus.org/~simon/putty-snapshots/htmldoc/AppendixC.html)
 
 ## challenge 5
 
@@ -633,17 +633,25 @@ the function that sends that encrypts the data that is sent out to the LP is `yf
 
 ## Challenge 8
 
-ilneeajkvirge:
+Goal break the encryption being used to talk to the LP
 
-payload=client_public(32)+length_header(8)+nonce(24)+ciphertext
+The Protocol at a highlevel looks like the following and utilizes LibSodium to pass encrypted containers around.
+the machine_identifer is a comma delinated list of base64 encoded equal to statements getting username, shortversion, os, time
 
-```sequence
-victim->LP: public_key
-Note over victim: hard coded LP public key
-victim->LP: lengthheader + nonce + encrypted_base64_id)
-victim->LP: lengthheader + nonce + pre_cmd + uuid + end_cmd
-LP->victim: LP Verification Response
+```mermaid
+sequenceDiagram
+    victim->>LP: public_key
+    Note over victim: hard coded LP public key
+    victim->>LP: lengthheader + nonce + CryptoBox(Client_secret, LP_Public, machine_identifier)
+    victim->>LP: lengthheader + nonce + CryptoSecretBox(SHA256(user+version+time), PCommands)
+    LP-->>victim: LP Verification Response
 ```
+
+as seen in the chart after the initial transfer of the machine identifier data is sent to the LP using SHA256 hased values handed off in the machine identifer.This hash is then used as the key in the Cypto_Secret_Box
+
+This makes the target for decryption the Secret Box because Cracking the CryptoBox would take longer than the universe has been around. However the LibSodium library uses xsalsa20 under the hood. This is a stream cipher.
+
+Taking this knowledge we can say that 
 
 The following code can decrypt the Cryptobox data
 ``` Python
