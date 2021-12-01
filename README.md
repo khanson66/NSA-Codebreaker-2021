@@ -651,7 +651,15 @@ as seen in the chart after the initial transfer of the machine identifier data i
 
 This makes the target for decryption the Secret Box because Cracking the CryptoBox would take longer than the universe has been around. However the LibSodium library uses xsalsa20 under the hood. This is a stream cipher.
 
-Taking this knowledge we can say that 
+Taking this knowledge we can get the length of the initial string transferred then use that to to derive the length of the username. 
+
+username length calculation: `length=len(hex_cipher)-32-142`
+then take the count of the hex of the base64 encoded `username=xxx` this will give you the length of the username. NOTE: because it is base64ed the length will be 3 wide.
+
+|ip|key|uuid|
+|---|---|---|
+||hildegaard+3.0.4.8+1615896246||
+||tallulah+1.1.2.9+1615896210||
 
 The following code can decrypt the Cryptobox data
 ``` Python
