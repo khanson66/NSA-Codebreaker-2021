@@ -658,8 +658,8 @@ then take the count of the hex of the base64 encoded `username=xxx` this will gi
 
 |ip|key|uuid|
 |---|---|---|
-|192.168.212.45|hildegaard+3.0.4.8+1615896246|ce970a0e6d3449887e163db65602cd4|
-|192.168.195.37|tallulah+1.1.2.9+1615896210|db4e26e13ce4730a799ba66000cec15|
+|192.168.212.45|hildegaard+3.0.4.8+1615896246|0E0A97CE-346D-8849-7E16-3DB65602CD4E|
+|192.168.195.37|tallulah+1.1.2.9+1615896210|E1264EDB-E43C-0A73-799B-A66000CEC15E|
 
 The following code can decrypt the Cryptobox data
 ``` Python
