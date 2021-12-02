@@ -656,10 +656,12 @@ Taking this knowledge we can get the length of the initial string transferred th
 username length calculation: `length=len(hex_cipher)-32-142`
 then take the count of the hex of the base64 encoded `username=xxx` this will give you the length of the username. NOTE: because it is base64ed the length will be 3 wide.
 
+wordlist attempted (https://github.com/jeanphorn/wordlist/blob/master/usernames.txt, https://github.com/danielmiessler/SecLists/blob/master/Usernames/xato-net-10-million-usernames-dup.txt)
+
 |ip|key|uuid|
 |---|---|---|
-|192.168.212.45|hildegaard+3.0.4.8+1615896246|0E0A97CE-346D-8849-7E16-3DB65602CD4E|
-|192.168.195.37|tallulah+1.1.2.9+1615896210|E1264EDB-E43C-0A73-799B-A66000CEC15E|
+|192.168.212.45|hildegaard+3.0.4.8+1615896246|3ce970a0-e6d3-4498-87e1-63db65602cd4|
+|192.168.195.37|tallulah+1.1.2.9+1615896210|3db4e26e-13ce-4730-a799-ba66000cec15|
 
 The following code can decrypt the Cryptobox data
 ``` Python
