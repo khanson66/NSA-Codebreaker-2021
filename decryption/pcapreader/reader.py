@@ -64,7 +64,6 @@ def toText(data):
     #check if header is valid
     if data[0:4] != Structure.MAGIC_START:
         print("ERROR: INVAILD HEADER")
-        print(Structure.MAGIC_START)
         return None
     #result += "MAGIC_START + "
     index=4
@@ -77,7 +76,9 @@ def toText(data):
         if index > len(data):
             print("ERROR: the packet had not clear ending")
             return None
-        result += " + "
+        
+        if index != 4:
+            result += " + "
         param = data[index:index+2]
         index +=2 #move past param
         section_length = bytesToInt(data[index:index+2])
