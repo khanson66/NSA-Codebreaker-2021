@@ -149,9 +149,27 @@ def toText(data):
     return result
 
 def main():
-    box = create_secretbox("hildegaard+3.0.4.8+1615896246")
+    
+    
+    
+    #box = create_secretbox("beckett+0.3.6.5+1615896180")
+    #with open(".\\decryption\\pcapreader\\session1.data",'r') as file:
+    
+    #box = create_secretbox("cathleen+2.0.9.2+1615896189")
+    #with open(".\\decryption\\pcapreader\\session2.data",'r') as file:
+    
+    #box = create_secretbox("root+1.4.0.3+1615896201")
+    #with open(".\\decryption\\pcapreader\\session3.data",'r') as file:
+    
     #box = create_secretbox("tallulah+1.1.2.9+1615896210")
-    with open(".\\decryption\\pcapreader\\data.txt",'r') as file:
+    #with open(".\\decryption\\pcapreader\\session4.data",'r') as file:
+
+    #box = create_secretbox("hildegaard+3.0.4.8+1615896246")
+    #with open(".\\decryption\\pcapreader\\session5.data",'r') as file:
+
+    box = create_secretbox("bronwyn+3.4.9.1+1615896253")
+    with open(".\\decryption\\pcapreader\\session6.data",'r') as file:
+    
         isLP = False
         for line in file:
             hex_clean = decode(box,line)

